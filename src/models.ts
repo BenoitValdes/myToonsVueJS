@@ -1,4 +1,5 @@
 import { loadXML } from "@/utils";
+import { booksStore } from './stores/dataStore.ts'
 
 
 function stringToGUID(str: string): string {
@@ -50,9 +51,9 @@ export class Book{
     link: string
     title: string
     image: string
-    synopsis: string
     pubdate: Date
-    chapters: Chapter[]
+    _chapters: Chapter[] | null = null;
+    _synopsis: string | null = null;
     _new: boolean | null = null;
     _favorite: boolean | null = null;
     
@@ -61,23 +62,23 @@ export class Book{
         link: string,
         title: string,
         image: string,
-        synopsis: string,
+        // synopsis: string,
         pubdate: string,
-        chapters: Chapter[]
+        // chapters: Chapter[]
     ) {
         this.guid = guid;
         this.link = link;
         this.title = title;
         this.image = image;
-        this.synopsis = synopsis;
+        // this.synopsis = synopsis;
         this.pubdate = new Date(pubdate);
-        this.chapters = chapters;
+        // this.chapters = chapters;
 
         // Propagate the book on the chapter to be able to retrieve it from 
         // the chapter.
-        this.chapters.forEach(chapter => {
-            chapter.book = this;
-        })
+        // this.chapters.forEach(chapter => {
+        //     chapter.book = this;
+        // })
 
     }
 
@@ -90,6 +91,48 @@ export class Book{
         const guid = await stringToGUID(url);
         const chapters = await Promise.all(Array.from(xml.querySelectorAll('item') || []).map(item => Chapter.fromXml(item)));
         return new Book(guid, url, title, image, synopsis, pubDate, chapters);
+    }
+
+    static async fromMasterItem(item: Element): Promise<Book> {
+        const title = item.querySelector('title')?.textContent || '';
+        const link = item.querySelector('link')?.textContent || '';
+        const guid = item.querySelector('guid')?.textContent || '';
+        const pubDate = item.querySelector('pubDate')?.textContent || '';
+        const image = getChapterImages(item)[0];
+        return new Book(guid, link, title, image, pubDate);
+    }
+
+    async lazyLoad() {
+        const store = booksStore();
+
+        const xml = await loadXML(this.link);
+        this.title = xml.querySelector('channel > title')?.textContent || '';
+        this.image = xml.querySelector('channel > image > url')?.textContent || '';
+        this._synopsis = xml.querySelector('channel > description')?.textContent || '';
+        this._chapters = await Promise.all(
+            Array.from(
+                xml.querySelectorAll('item') || []
+            ).map(item => Chapter.fromXml(item)));
+
+        // Propagate the book on the chapter to be able to retrieve it from 
+        // the chapter.
+        this.chapters.forEach(chapter => {
+            chapter.book = this;
+        })
+    }
+
+    get synopsis() {
+        if (this._synopsis === null) {
+            this.lazyLoad()
+        }
+        return this._synopsis;
+    }
+
+    get chapters() {
+        if (this._chapters === null) {
+            this.lazyLoad()
+        }
+        return this._chapters;
     }
 
     isNew(): boolean {
@@ -117,6 +160,9 @@ export class Book{
     }
 
     hasDownloadedChapters(): boolean {
+        if (this._chapters === null){
+            return false;
+        }
         return this.chapters.filter(c => c.isDownloaded()).length > 0;
     }
 }

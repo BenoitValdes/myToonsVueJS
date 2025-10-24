@@ -13,7 +13,11 @@ const router = createRouter({
     { path: '/downloads', component: Library, props: {mode: "downloads"}},
     // { path: '/settings', component: Settings},
     { path: '/book/:guid', component: Book, props:true},
-    { path: '/chapter/:guid', component: Chapter, props:true},
+    {
+      path: '/book/:bookGuid/chapter/:chapterGuid',
+      component: Chapter,
+      props: true
+    }
   ],
 })
 

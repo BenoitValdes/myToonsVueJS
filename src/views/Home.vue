@@ -3,9 +3,9 @@
   import Navbar from '../components/Navbar.vue'
   import Card from '../components/Card.vue'
 
-  import { useDataStore } from '../stores/dataStore'
+  import { booksStore } from '../stores/dataStore'
 
-  const store = useDataStore()
+  const store = booksStore()
   const books = store.books
 
 </script>

@@ -6,7 +6,7 @@
   import Card from '../components/Card.vue'
   import Chapteritem from '../components/Chapteritem.vue'
 
-  import { useDataStore } from '../stores/dataStore.ts'
+  import { booksStore } from '../stores/dataStore.ts'
   import { Book } from '../models.ts'
 
   const props = defineProps({
@@ -125,7 +125,7 @@
 
 
   // Grab the page data
-  const store = useDataStore();
+  const store = booksStore();
   const book = ref<Book>();
 
   function findBook(){
@@ -166,7 +166,7 @@
               ></i>
               <i
                 :class="book.isFavorite() ? 'icon-heart-solid active': 'icon-heart-regular'"
-                @click="() => {book.setFavorite(!book.isFavorite()); console.log()}"
+                @click="() => {book.setFavorite(!book.isFavorite())}"
               ></i>
             </div>
         </div>

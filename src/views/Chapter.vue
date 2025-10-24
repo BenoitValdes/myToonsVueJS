@@ -6,11 +6,12 @@
   import Card from '../components/Card.vue'
   import Chapteritem from '../components/Chapteritem.vue'
 
-  import { useDataStore } from '../stores/dataStore.ts'
+  import { booksStore } from '../stores/dataStore.ts'
   import { Chapter } from '../models.ts'
 
   const props = defineProps({
-    guid: String
+    bookGuid: String,
+    chapterGuid: String
   })
 
   // Handle nav bar animation
@@ -46,30 +47,34 @@
 
 
   // Handle data loading
-  const store = useDataStore()
+  const store = booksStore()
   const chapter = ref<Chapter>(null);
   const prevChapter = ref<Chapter>(null)
   const nextChapter = ref<Chapter>(null)
 
-  function findChapter(){
+  async function findChapter(){
     if (chapter.value) return;
-    const found = store.chapters?.find(b => b.guid === props.guid);
-    if (found) {
-      chapter.value = found;
-      const book = found.book;
-      console.log(book);
-      console.log(found.guid);
 
-      for (let i = 0; i < book.chapters.length; i++) {
-        const chap = book.chapters[i];
-        if (chap.guid != found.guid) continue;
-        if (i != 0) {
-          nextChapter.value = book.chapters[i-1];
-        }
-        if (i < book.chapters.length) {
-          prevChapter.value = book.chapters[i+1];
-        }
-        console.log(prevChapter.value?.title, nextChapter.value?.title)
+    // We need to find the book first as it contains the chapters
+    const book = store.books?.find(b => b.guid === props.bookGuid);
+    if (!book) return;
+
+    // Ensure the chapters are loaded before accessing to them.
+    if (book._chapters === null){
+      await book.lazyLoad();
+    }
+    
+    for (let i = 0; i < book.chapters.length; i++) {
+      const chap = book.chapters[i];
+      if (chap.guid != props.chapterGuid) continue;
+      // set the chapter as we found it.
+      chapter.value = chap;
+      
+      if (i != 0) {
+        nextChapter.value = book.chapters[i-1];
+      }
+      if (i < book.chapters.length) {
+        prevChapter.value = book.chapters[i+1];
       }
     }
   }
@@ -78,8 +83,8 @@
   // If not all the chapters have been loaded yet, check if the good every 
   // time there are new loaded chapters
   watch(
-    store.chapters,
-    (chapters) => {
+    store.books,
+    (book) => {
       findChapter();
     }
   )
@@ -108,13 +113,13 @@
   </div>
   <nav ref="bottomNavBar" class="bottom-nav chapter">
     <RouterLink
-      :to="prevChapter ? `/chapter/${prevChapter.guid}` : ''"
+      :to="prevChapter ? `/book/${props.bookGuid}/chapter/${prevChapter.guid}` : ''"
       class="icon-angle-left-solid"
       :class="{invisible: !prevChapter}"
     />
     {{ chapter ? chapter.title : 'loading...'}}
     <RouterLink
-      :to="nextChapter ? `/chapter/${nextChapter.guid}` : ''"
+      :to="nextChapter ? `/book/${props.bookGuid}/chapter/${nextChapter.guid}` : ''"
       class="icon-angle-right-solid"
       :class="{invisible: !nextChapter}"
     />

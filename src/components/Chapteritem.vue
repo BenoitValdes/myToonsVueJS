@@ -14,7 +14,6 @@ const checked = ref(false)
 
 defineExpose({
   getStatus: () => {
-    console.log(checked.value);
     return {
       chapter: props.chapter,
       checked: checked.value
@@ -26,7 +25,7 @@ defineExpose({
 
 <template>
   <RouterLink 
-    :to="!props.downloadMode ? `/chapter/${props.chapter.guid}` : ''"
+    :to="!props.downloadMode ? `/book/${props.chapter.book.guid}/chapter/${props.chapter.guid}` : ''"
     class="chapter-item"
     @click.prevent="props.downloadMode && $event.preventDefault()"
   >

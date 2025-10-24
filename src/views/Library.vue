@@ -7,14 +7,14 @@ import { ref, watch } from 'vue'
   import { loadXML } from '../utils';
   import { Book } from '../models.ts';
 
-  import { useDataStore } from '../stores/dataStore'
+  import { booksStore } from '../stores/dataStore'
 
   const props = defineProps({
     mode: String
   })
 
 
-  const store = useDataStore();
+  const store = booksStore();
   const books = store.books;
 
   const currentSearchText = ref<String>('');
