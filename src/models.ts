@@ -2,14 +2,6 @@ import { loadXML } from "@/utils";
 import { booksStore } from './stores/dataStore.ts'
 
 
-function stringToGUID(str: string): string {
-    let hash = 0n;
-    for (let i = 0; i < str.length; i++) {
-        hash = (hash * 31n + BigInt(str.charCodeAt(i))) & 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFn;
-    }
-    return hash.toString(16).padStart(40, '0');
-}
-
 function getChapterImages(chapterXml: Document) {
     const content = chapterXml.querySelector('content\\:encoded, encoded')?.textContent || '';
     const contentXml = new window.DOMParser().parseFromString(content, "text/html");
@@ -17,9 +9,7 @@ function getChapterImages(chapterXml: Document) {
     return [...imgs].map(img => img.getAttribute('src'));
 }
 
-function parsePubDate(pubDateStr: Date): string {
-    const date = new Date(pubDateStr);
-
+function parsePubDate(date: Date): string {
     // format like 03 Sep 2025
     const formatted = date.toLocaleDateString("en-GB", {
         day: "2-digit",
@@ -62,35 +52,13 @@ export class Book{
         link: string,
         title: string,
         image: string,
-        // synopsis: string,
         pubdate: string,
-        // chapters: Chapter[]
     ) {
         this.guid = guid;
         this.link = link;
         this.title = title;
         this.image = image;
-        // this.synopsis = synopsis;
         this.pubdate = new Date(pubdate);
-        // this.chapters = chapters;
-
-        // Propagate the book on the chapter to be able to retrieve it from 
-        // the chapter.
-        // this.chapters.forEach(chapter => {
-        //     chapter.book = this;
-        // })
-
-    }
-
-    static async fromUrl(url: string): Promise<Book> {
-        const xml = await loadXML(url)
-        const title = xml.querySelector('channel > title')?.textContent || '';
-        const image = xml.querySelector('channel > image > url')?.textContent || '';
-        const synopsis = xml.querySelector('channel > description')?.textContent || '';
-        const pubDate = xml.querySelector('channel > pubDate')?.textContent || '';
-        const guid = await stringToGUID(url);
-        const chapters = await Promise.all(Array.from(xml.querySelectorAll('item') || []).map(item => Chapter.fromXml(item)));
-        return new Book(guid, url, title, image, synopsis, pubDate, chapters);
     }
 
     static async fromMasterItem(item: Element): Promise<Book> {

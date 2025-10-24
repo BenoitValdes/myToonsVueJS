@@ -39,9 +39,3 @@ const goTo = (icon: string) => {
     ></i>
   </nav>
 </template>
-
-<style scoped>
-.current {
-  color: red; /* example of highlighting current icon */
-}
-</style>
