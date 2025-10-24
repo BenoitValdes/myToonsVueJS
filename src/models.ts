@@ -1,5 +1,5 @@
 import { loadXML } from "@/utils";
-import { booksStore } from './stores/dataStore.ts'
+import { booksStore, favoriteBooksStore, chaptersViewed } from './stores/dataStore.ts'
 
 
 function getChapterImages(chapterXml: Document) {
@@ -45,7 +45,6 @@ export class Book{
     _chapters: Chapter[] | null = null;
     _synopsis: string | null = null;
     _new: boolean | null = null;
-    _favorite: boolean | null = null;
     
     constructor(
         guid: string,
@@ -116,15 +115,18 @@ export class Book{
     }
 
     isFavorite(): boolean {
-        if (this._favorite === null){
-            // TODO: get the data from the local storage
-            this._favorite = false;
-        }
-        return this._favorite;
+        const favBookStore = favoriteBooksStore();
+        return favBookStore.books.includes(this.guid);
     }
 
     setFavorite(state: boolean) {
-        this._favorite = state;
+        const favBookStore = favoriteBooksStore();
+        if (state) {
+            favBookStore.addBook(this.guid);
+        }
+        else {
+            favBookStore.removeBook(this.guid);
+        }
     }
 
     hasDownloadedChapters(): boolean {
@@ -143,7 +145,6 @@ export class Chapter{
     pubdate: Date
     viewed: boolean
     book?: Book
-    _viewed: boolean | null = null;
     _dowloaded: boolean | null = null;
     
     constructor(
@@ -176,10 +177,18 @@ export class Chapter{
     }
 
     isViewed(): boolean {
-        if (this._viewed === null) {
-            // TODO: get the data from the local storage
+        const chapViewed = chaptersViewed();
+        return chapViewed.chapters.includes(this.guid);
+    }
+
+    setViewed(state: boolean){
+        const chapViewed = chaptersViewed();
+        if (state) {
+            chapViewed.addChapter(this.guid);
         }
-        return false;
+        else {
+            chapViewed.removeChapter(this.guid);
+        }
     }
 
     isDownloaded(): boolean {

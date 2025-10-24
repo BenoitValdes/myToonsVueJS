@@ -13,8 +13,8 @@
 
     // serialize
     store.$subscribe((_mutation, state) => {
-      console.log(storeKey, state);
-      // localStorage.setItem(storeKey, JSON.stringify(state))
+      // console.log(storeKey, state);
+      localStorage.setItem(storeKey, JSON.stringify(state))
   })
 
   }

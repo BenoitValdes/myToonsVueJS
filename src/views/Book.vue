@@ -128,22 +128,20 @@
   const store = booksStore();
   const book = ref<Book>();
 
-  function findBook(){
-    return store.books?.find(b => b.guid === props.guid);
-  }
-
-  let found = findBook();
-  if (found) {
+  async function findBook(){
+    if (book.value) return;
+    const found = store.books?.find(b => b.guid === props.guid);
+    if (!found) return;
+    await found.lazyLoad();
     book.value = found;
   }
+
+  findBook();
 
   watch(
     store.books,
     (books) => {
-      found = findBook();
-      if (found) {
-        book.value = found;
-      }
+      findBook();
     }
   )
 

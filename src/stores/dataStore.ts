@@ -21,7 +21,33 @@ export const booksStore = defineStore('data', () => {
   return {books, fetchData }
 })
 
-export const favoriteBooksStore = defineStore('favoriteBooksStore', () => []);
+export const favoriteBooksStore = defineStore('favoriteBooksStore', () => {
+  const books = ref<string[]>([])
+
+  function addBook(bookGuid: string) {
+    books.value.push(bookGuid)
+  }
+
+  function removeBook(bookGuid: string) {
+    books.value = books.value.filter(b => b !== bookGuid)
+  }
+  return { books, addBook, removeBook };
+});
+
 export const chaptersDownloaded = defineStore('chaptersDownloaded', () => []);
-export const chaptersViewed = defineStore('chaptersViewed', () => []);
+
+export const chaptersViewed = defineStore('chaptersViewed', () => {
+  const chapters = ref<string[]>([])
+
+  function addChapter(chapterGuid: string) {
+    if (!chapters.value.includes(chapterGuid)) {
+      chapters.value.push(chapterGuid)
+    }
+  }
+
+  function removeChapter(chapterGuid: string) {
+    chapters.value = chapters.value.filter(b => b !== chapterGuid)
+  }
+  return { chapters, addChapter, removeChapter };
+});
 

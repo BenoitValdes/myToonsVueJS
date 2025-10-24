@@ -41,8 +41,14 @@
   }
 
   function containerScrolled() {
-    setNavBarVisibility(false);
-
+    const currentScrollY = container.value.scrollTop;
+    if (currentScrollY >= container.value.scrollHeight * 0.97) {
+      setNavBarVisibility(true);
+      if (chapter) {
+        chapter.value.setViewed(true)
+      }
+    }
+    else setNavBarVisibility(false);
   }
 
 

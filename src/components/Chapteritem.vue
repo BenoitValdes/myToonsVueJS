@@ -24,7 +24,7 @@ defineExpose({
 </script>
 
 <template>
-  <RouterLink 
+  <RouterLink
     :to="!props.downloadMode ? `/book/${props.chapter.book.guid}/chapter/${props.chapter.guid}` : ''"
     class="chapter-item"
     @click.prevent="props.downloadMode && $event.preventDefault()"
@@ -37,6 +37,6 @@ defineExpose({
       <span class="marquee">{{ props.chapter.title }}</span>
       <span class="date">{{props.chapter.getDate()}}</span>
     </div>
-    <i v-if="props.chapter.viewed" class="viewed icon-"></i>
+    <i v-if="props.chapter.isViewed()" class="viewed icon-"></i>
   </RouterLink>
 </template>
