@@ -1,0 +1,579 @@
+:root {
+    --background: #ffffff;
+    --surface: #d5d5d5;
+    --primary-text: #000000;
+    --secondary-text: #303030;
+    --accent:  #EAA419;
+    --top-safe-area: env(safe-area-inset-top);
+    --bottom-safe-area: env(safe-area-inset-bottom);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --background: #101010;
+        --surface: #202020;
+        --primary-text: #ffffff;
+        --secondary-text: #bcbcbc;
+        --accent:  #eac319;
+    }
+}
+
+/********************************* FONTS *********************************/
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 100 900;
+  font-stretch: 87.5%;
+  /* font-display: swap; */
+  src: url(fonts/roboto-normal.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'icomoon';
+  src: url('fonts/icomoon.woff?njizz4') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'icomoon' !important;
+  speak: never;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-angle-right-solid:before {
+  content: "\e900";
+}
+.icon-angle-left-solid:before {
+  content: "\e901";
+}
+.icon-arrow-left-solid:before {
+  content: "\e902";
+}
+.icon-books-regular:before {
+  content: "\e903";
+}
+.icon-books-solid:before {
+  content: "\e904";
+}
+.icon-check-solid:before {
+  content: "\e905";
+}
+.icon-circle-check-solid:before {
+  content: "\e906";
+}
+.icon-circle-light:before {
+  content: "\e907";
+}
+.icon-cloud-download-regular:before {
+  content: "\e908";
+}
+.icon-cloud-download-solid:before {
+  content: "\e909";
+}
+.icon-cloud-xmark-solid:before {
+  content: "\e90a";
+}
+.icon-cog-regular:before {
+  content: "\e90b";
+}
+.icon-cog-solid:before {
+  content: "\e90c";
+}
+.icon-heart-regular:before {
+  content: "\e90d";
+}
+.icon-heart-solid:before {
+  content: "\e90e";
+}
+.icon-house-regular:before {
+  content: "\e90f";
+}
+.icon-house-solid:before {
+  content: "\e910";
+}
+.icon-logo:before {
+  content: "\e911";
+}
+.icon-search-solid:before {
+  content: "\e912";
+}
+.icon-circle-xmark-solid:before {
+  content: "\e913";
+}
+
+
+/********************************* GLOBAL *********************************/
+html, body, a {
+    margin: 0;
+    text-decoration: none;
+    color: var(--primary-text);
+    font-family: "Roboto", sans-serif;
+
+    /* preventing overflow */
+    overscroll-behavior: none;
+    overflow: hidden;
+}
+
+#app {
+    background-color: var(--background);
+    display: flex;
+    flex-direction: column;
+    height: 100vh; /* full viewport height */
+}
+
+.marquee {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1; 
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+a.invisible {
+    pointer-events: none;
+    color: transparent !important;
+}
+
+.icon-checkbox input {
+    display: none;
+}
+
+.icon-checkbox .icon- {
+    font-size: 24px;
+}
+
+.icon-checkbox .icon-::before {
+    content: "\e907";
+    color: var(--secondary-text);
+}
+
+.icon-checkbox input:checked + .icon-::before {
+    content: "\e906";
+    color: var(--accent);
+}
+
+
+
+
+
+
+/********************************* NAV BARS *********************************/
+
+nav {
+    background-color: var(--surface);
+}
+
+.top-nav {
+    position: relative;
+    height: 50px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding-top: var(--top-safe-area);
+    padding-left: 15px;
+    padding-right: 15px;
+    gap: 10px;
+}
+
+.top-nav .icon-logo {
+    font-size: 32pt;
+    color: var(--accent);
+}
+
+
+.bottom-nav {
+    height: 50px;
+    padding-bottom: var(--bottom-safe-area);
+    /* position: fixed;
+    bottom: 0; */
+    box-shadow: 0px -2px 4px rgba(0, 0, 0, 0.25);
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.bottom-nav.chapter {
+    justify-content: space-between;
+    padding: 0px 10px;
+    padding-bottom: var(--bottom-safe-area);
+}
+
+nav.chapter {
+    position: absolute;
+    left: 0;
+    right: 0;
+    transition: transform 0.3s ease-in-out; /* Smooth transition */
+}
+
+.top-nav.chapter {
+    top: 0;
+}
+
+.bottom-nav.chapter {
+    bottom: 0;
+}
+
+.top-nav.hidden {
+    transform: translateY(-110%); /* Move completely out of view */
+}
+
+
+.bottom-nav.hidden {
+    transform: translateY(100%); /* Move bottom navbar fully out of view */
+}
+
+.bottom-nav [class^="icon-"], .bottom-nav [class*=" icon-"] {
+    color: var(--secondary-text);
+    font-size: 26px;
+}
+.bottom-nav .icon-.current {
+    color: var(--accent);
+}
+
+#home::before{
+    content: "\e90f";
+}
+
+#home.current::before {
+    content: "\e910";
+}
+
+#library::before{
+    content: "\e903";
+}
+
+#library.current::before {
+    content: "\e904";
+}
+
+#favorites::before{
+    content: "\e90d";
+}
+
+#favorites.current::before {
+    content: "\e90e";
+}
+
+#downloads::before{
+    content: "\e908";
+}
+
+#downloads.current::before {
+    content: "\e909";
+}
+
+#settings::before{
+    content: "\e90b";
+}
+
+#settings.current::before {
+    content: "\e90c";
+}
+
+
+/****************************** SEARCH BEHAVIOR ******************************/
+
+.search {
+    display: flex;
+    align-items: center;   /* vertical center */
+    margin-left: auto;
+    padding-left: 5px;
+    padding-right: 5px;
+
+    height: 28px;
+    box-sizing: border-box;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    transition: border-color 0.2s ease;
+    color: var(--secondary-text)
+}
+
+.search input {
+    width: 0px;
+    margin-left: 5px;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--primary-text);
+    transition: width 0.2s ease;
+}
+
+#search-btn {
+    font-size: 20px;
+    transition: font-size 0.2s ease
+}
+
+#search-clear-btn {
+    font-size: 0;
+    transition: font-size 0.2s ease;
+}
+
+.search.active {
+    border-color: var(--secondary-text);
+}
+.search.active input {
+    width: 120px;
+}
+
+.search.active .search-icon, .search.active .search-clear {
+    width: 16px;
+    height: 16px;
+}
+.search.active #search-btn, .search.active #search-clear-btn {
+    font-size: 14px;
+}
+
+
+
+/********************************* MAIN BODY *********************************/
+
+.container {
+    flex: 1;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+.container > img {
+    width: 100%;
+}
+
+.grid {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    align-content: flex-start;
+    padding: 15px;
+    gap: 15px;
+    justify-content: space-between;
+}
+
+/* Hack the issue in the layout we have when we've 2 book in the same row */
+.horizontal-spacer {
+    height: 50px;
+    width: 110px;
+}
+
+
+.header {
+    position: relative;
+    width: 100%;
+    height: calc(250px + var(--top-safe-area));
+    overflow: hidden;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
+}
+
+.header .back-btn {
+    position: absolute;
+    left: 10px;
+    top: 20px;
+    font-size: 30px;
+}
+.back-btn::before {
+    content: "\e902";
+}
+
+.layout-horizontal {
+    position: absolute;
+    width: 100%;
+    height: 110px;
+    bottom: 0;
+    background-color: var(--surface);
+}
+
+.poster {
+    position: absolute;
+    width: 90px;
+    height: 140px;
+    left: 20px;
+    bottom: 20px;
+    object-fit: cover;
+    object-position: top;
+}
+
+.book-bg {
+    /* 
+    Blur is darkening the edges. To avoid this, we make the image bigger and 
+    translate it of the size of the Blur.
+    */
+    width: calc(100% + 20px);
+    transform: translate(-10px, -10px);
+    filter: blur(10px);
+}
+
+.layout-vertical {
+    margin: 20px;
+    padding-left: 110px;
+}
+
+
+.bottom-row {
+    width: 100%;
+    height: 50px;
+    position: relative;
+    bottom: 20px;
+
+    display: flex;
+    flex-direction: row;
+    /* justify-content: center; */
+    align-items: center;
+    gap: 20px;
+    font-size: 26px;
+}
+
+.bottom-row .active {
+    color: var(--accent);
+}
+
+
+.synopsis {
+    padding: 10px;
+}
+
+
+.chapter-list {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto; /* this enables scrolling */
+    -webkit-overflow-scrolling: touch; /* smooth scrolling on mobile */
+    gap: 10px;
+}
+
+.chapter-item {
+    height: 50px;
+    padding: 0px 10px;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+
+    /* background-color: var(--surface); */
+    /* border-top: 1px solid var(--secondary-text); */
+}
+
+.chapter-item:last-child {
+    /* border-bottom: 1px solid var(--secondary-text); */
+    margin-bottom: 10px;
+
+}
+
+.chapter-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.chapter-info .date {
+    color: var(--secondary-text);
+}
+
+.chapter-item .viewed {
+    margin-left: auto;
+    color: var(--accent);
+    font-size: 24px;
+}
+.chapter-item .viewed::before {
+    content: "\e905";
+}
+
+button.download {
+    position: absolute;
+    left: 50%;
+    bottom: 30px;
+    transform: translate(-50%, 0%);
+    padding: 5px 10px;
+
+    background: var(--accent);
+    color: var(--background);
+
+    font-weight: bold;
+    font-size: 24px;
+    border: none;
+    border-radius: 8px;
+}
+
+
+.horizontal-flow {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 10px;
+    overflow-x: scroll;
+    padding-left: 10px;
+    padding-right: 10px;
+
+    /* Hide the scroll bars */
+    scrollbar-width: none;
+}
+
+.section-header {
+    margin: 10px;
+    margin-top: 20px;
+}
+
+.card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0px;
+    gap: 5px;
+    min-width: 140px;
+    max-width: 140px;
+}
+
+.card.small {
+    min-width: 100px;
+    width: 100px;
+}
+
+.card.new::after {
+    content: "NEW";
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: var(--accent);
+    color: var(--background);
+    font-size: 12px;
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+
+.card img {
+    width: 100%;
+    overflow: hidden;
+    aspect-ratio: 1;
+    object-fit: cover;
+    object-position: top;
+    border-radius: 5px;
+    
+}
+
+.card span {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;  /* limit to 2 lines */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;      /* center the text */
+}
