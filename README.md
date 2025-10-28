@@ -1,42 +1,24 @@
-# myToonsVueJS
+# Webtoon RSS Reader (WIP)
 
-This template should help get you started developing with Vue 3 in Vite.
+A personal project built with **Vue.js** to read webtoons from RSS feeds that use only images in their content. The goal of this app is to provide a **single platform to read webtoons**, no matter the source, as long as the feed follows standard RSS guidelines.
 
-## Recommended IDE Setup
+This project is also a **learning experience in front-end development**, and everything has been created from scratch by me, from the **UI to the backend**.
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+## Features
 
-## Recommended Browser Setup
+- Supports image-only RSS feeds (perfect for webtoons and comics).
+- Unified interface to read content from multiple sources.
+- Responsive design for a smooth reading experience.
+- WIP: Features are still being developed and improved.
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd) 
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
+## Tech Stack
 
-## Type Support for `.vue` Imports in TS
+- **Frontend:** Vue.js  
+- **Backend:** Custom implementation to fetch and serve RSS feeds  
+- **Other:** Standard web technologies (HTML, CSS, JavaScript)
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+## Usage
 
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
-
-```sh
-npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Type-Check, Compile and Minify for Production
-
-```sh
-npm run build
-```
+1. Clone the repository:  
+   ```bash
+   git clone <repo-url>
