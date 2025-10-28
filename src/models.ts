@@ -2,11 +2,13 @@ import { loadXML } from "@/utils";
 import { booksStore, favoriteBooksStore, chaptersViewed } from './stores/dataStore.ts'
 
 
-function getChapterImages(chapterXml: Document) {
+function getChapterImages(chapterXml: Element): string[] {
     const content = chapterXml.querySelector('content\\:encoded, encoded')?.textContent || '';
     const contentXml = new window.DOMParser().parseFromString(content, "text/html");
     const imgs = [...contentXml.querySelectorAll('img')];
-    return [...imgs].map(img => img.getAttribute('src'));
+    return imgs
+        .map(img => img.getAttribute('src'))
+        .filter((src): src is string => src !== null);
 }
 
 function parsePubDate(date: Date): string {
@@ -19,7 +21,7 @@ function parsePubDate(date: Date): string {
 
     // calculate "x days ago"
     const now = new Date();
-    const diffTime = now - date;
+    const diffTime = now.getTime() - date.getTime();
     const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
     let relative;
@@ -65,13 +67,11 @@ export class Book{
         const link = item.querySelector('link')?.textContent || '';
         const guid = item.querySelector('guid')?.textContent || '';
         const pubDate = item.querySelector('pubDate')?.textContent || '';
-        const image = getChapterImages(item)[0];
+        const image = getChapterImages(item)[0] ?? '';
         return new Book(guid, link, title, image, pubDate);
     }
 
     async lazyLoad() {
-        const store = booksStore();
-
         const xml = await loadXML(this.link);
         this.title = xml.querySelector('channel > title')?.textContent || '';
         this.image = xml.querySelector('channel > image > url')?.textContent || '';
@@ -95,11 +95,11 @@ export class Book{
         return this._synopsis;
     }
 
-    get chapters() {
+    get chapters(): Chapter[] {
         if (this._chapters === null) {
             this.lazyLoad()
         }
-        return this._chapters;
+        return this._chapters!;
     }
 
     isNew(): boolean {
@@ -161,7 +161,7 @@ export class Chapter{
         this.viewed = viewed;
     }
 
-    static async fromXml(item: Document): Promise<Chapter> {
+    static async fromXml(item: Element): Promise<Chapter> {
         const guid = item.querySelector('guid')?.textContent || '';
         const title = item.querySelector('title')?.textContent || '';
         const content = getChapterImages(item);

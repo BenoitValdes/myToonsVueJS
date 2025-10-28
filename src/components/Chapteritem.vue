@@ -25,6 +25,7 @@ defineExpose({
 
 <template>
   <RouterLink
+    v-if="props.chapter && props.chapter.book"
     :to="!props.downloadMode ? `/book/${props.chapter.book.guid}/chapter/${props.chapter.guid}` : ''"
     class="chapter-item"
     @click.prevent="props.downloadMode && $event.preventDefault()"

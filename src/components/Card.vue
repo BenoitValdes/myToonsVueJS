@@ -16,6 +16,7 @@
 
 <template>
   <RouterLink 
+    v-if="props.book"
     :to="`/book/${props.book.guid}`"
     class="card"
     :class="{new: props.new, small: props.small}"

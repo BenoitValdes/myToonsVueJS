@@ -1,9 +1,7 @@
 <script setup lang="ts">
   import router from '../router'
   import { ref, onMounted, watch } from 'vue';
-  import Topbar from '../components/Topbar.vue'
   import Navbar from '../components/Navbar.vue'
-  import Card from '../components/Card.vue'
   import Chapteritem from '../components/Chapteritem.vue'
 
   import { booksStore } from '../stores/dataStore.ts'
@@ -14,65 +12,80 @@
   });
 
   const downloadMode = ref<Boolean>(false);
-  const downloadBtn = ref<HTMLInputElement>(null);
+  const downloadBtn = ref<HTMLInputElement | null>(null);
 
   // Handle the download mode
   function downloadBtnClicked(){
-    chapterItems.value.forEach(item => {
-      const { chapter, checked } = item.getStatus();
-      if (checked) {
-        console.log(chapter.title);
-      }      
-    });
-    console.log('clicked');
+      // TODO: Loop overt all the chapterItems
+      //  Get their checkbox status
+      //  if checked, download if not already downloaded (check the model)
+      //. if unchecked, remove in downloaded (check the model)
 
+      // TODO: to donwload, try to use the service worker by adding new images 
+      // hidden and let the service worker it needs to store them. THis will 
+      // avoid opaque response like in the v1
   }
 
   // Handle the Checkbox drag select
-  const container = ref<HTMLInputElement>();
-  const chapterList = ref<HTMLInputElement>();
-  const chapterItems = ref<HTMLInputElement[]>();
+  const container = ref<HTMLElement>();
+  const chapterList = ref<HTMLElement>();
+  const chapterItems = ref<HTMLElement[]>();
   let isCheckboxDragging: Boolean = false;
-  let lastClientY: Float = 0.0
-  let checkValue: Boolean = true;
-  let lastChecked: HTMLInputElement = null
+  let lastClientY: number = 0.0;
+  let checkValue: boolean = true;
+  let lastChecked: HTMLElement | null = null
 
-  let scrollInterval = null;
+  let scrollInterval: number | null = null;
   // Area in the top/bottom of the scroll area we'll start the autoscroll.
-  const scrollThreshold: Integer = 50;
-  const scrollSpeed: Integer = 10;
+  const scrollThreshold: number = 50;
+  const scrollSpeed: number = 10;
 
-  function startDrag(event, isTouch: Boolean = false){
-    if (!downloadMode.value) return;
+  function getMouseTarget(
+    event: MouseEvent,
+    clientRect: DOMRect): HTMLElement | undefined {
+    const clientX = event.clientX;
+    const isValid = clientX < clientRect.left + 30;
+    if (!isValid) return undefined;
+    return event.target as HTMLElement | undefined;
+  }
 
-    const clientX = isTouch ? event.touches[0].clientX : event.clientX;
-    const rect = chapterList.value.getBoundingClientRect();
-    const isValid = clientX < rect.left + 30;
+  function getTouchTarget(
+    event: TouchEvent,
+    clientRect: DOMRect): HTMLElement | undefined {
+    const clientX = event.touches[0]?.clientX || -1;
+    const clientY = event.touches[0]?.clientY || -1;
+    const isValid = clientX < clientRect.left + 30;
     if (!isValid) return;
+    return document.elementFromPoint(clientX, clientY) as HTMLElement | undefined;
+  }  
 
-    let target: HTMLInputElement = null
-    if (isTouch){
-      target = document.elementFromPoint(
-        event.touches[0].clientX,
-        event.touches[0].clientY
-      ).closest('.chapter-item');
+  function startDrag(event: MouseEvent | TouchEvent){
+    if (!downloadMode.value || !chapterList.value) return;
+    const rect = chapterList.value.getBoundingClientRect();
+
+    let target: HTMLElement | undefined;
+
+    if (event instanceof MouseEvent) {
+      target = getMouseTarget(event, rect);
     }
-    else{
-      target = event.target.closest('.chapter-item');
+    else {
+      target = getTouchTarget(event, rect);
     }
 
     if (!target) return;
+    const chapterItem = target.closest<HTMLElement>('.chapter-item');
+    if (!chapterItem) return;
 
     isCheckboxDragging = true;
-    const checkBox = target.querySelector('input');
+    const checkBox = chapterItem.querySelector('input')!;
     checkBox.checked = !checkBox.checked;
     checkValue = checkBox.checked;
-    lastChecked = target;
+    lastChecked = chapterItem;
     event.preventDefault();
   }
 
-  function dragMove(clientY: Float = null) {
-    if (!downloadMode.value || !isCheckboxDragging) return;
+  function dragMove(clientY: number | null = null) {
+    if (!downloadMode.value || !isCheckboxDragging || ! container.value) return;
     
     // In the case we don't have access to the ClientY, then we use the 
     // lastClientY position.
@@ -90,7 +103,7 @@
     else autoScroll(0);
 
     const target = document.elementFromPoint(
-      rect.left, clientY)?.closest('.chapter-item');
+      rect.left, clientY)?.closest<HTMLElement>('.chapter-item');
 
     // Do not alter checkbox if :
     //  - chapter-item not found
@@ -99,7 +112,7 @@
     if (target === lastChecked) return;
 
     lastChecked = target;
-    const checkBox = target.querySelector('input');
+    const checkBox = target.querySelector('input')!;
     checkBox.checked = checkValue;
   }
 
@@ -110,15 +123,17 @@
     lastChecked = null;
   }
 
-  function autoScroll(direction: Integer) {
+  function autoScroll(direction: number) {
     // We want to stop the auto scroll
-    if (direction === 0){
+    if (direction === 0 && scrollInterval){
       clearInterval(scrollInterval);
       scrollInterval = null;
     }
-    else if (!scrollInterval){
+    else if (!scrollInterval && container.value){
+      // Capture the element to type check it correctly
+      const el = container.value;
       scrollInterval = setInterval(() => {
-          container.value.scrollTop += direction * scrollSpeed;
+          el.scrollTop += direction * scrollSpeed;
       }, 16);
     }
   }
@@ -164,7 +179,7 @@
               ></i>
               <i
                 :class="book.isFavorite() ? 'icon-heart-solid active': 'icon-heart-regular'"
-                @click="() => {book.setFavorite(!book.isFavorite())}"
+                @click="() => {book ? book.setFavorite(!book.isFavorite()) : ''}"
               ></i>
             </div>
         </div>
@@ -175,7 +190,7 @@
     class="container"
     ref="container"
     @mousemove="dragMove($event.clientY)"
-    @touchmove="dragMove($event.touches[0].clientY, true)"
+    @touchmove="dragMove($event.touches[0]?.clientY)"
     @scroll="dragMove()"
     @mouseup="stopDrag"
     @touchend="stopDrag"
@@ -186,13 +201,13 @@
       class="chapter-list"
       ref="chapterList"
       @mousedown="startDrag($event)"
-      @touchstart="startDrag($event, true)"
+      @touchstart="startDrag($event)"
     >
       <Chapteritem
         v-for="chapter in book.chapters"
         :key="chapter.guid"
         :chapter="chapter"
-        :downloadMode="downloadMode"
+        :downloadMode="downloadMode ? true : false"
         ref="chapterItems"
       />
     </div>

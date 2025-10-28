@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch } from 'vue';
+import type { Ref } from 'vue';
 
 const props = defineProps({
   showSearch: {
@@ -8,9 +9,9 @@ const props = defineProps({
   }
 });
 
-const isActive: Boolean = ref(false);
-const searchText: String = ref('');
-const searchInput = ref<HTMLInputElement>(null)
+const isActive: Ref<boolean> = ref(false);
+const searchText: Ref<string> = ref('');
+const searchInput: Ref<HTMLInputElement | null>  = ref(null)
 const emits = defineEmits(['searchText'])
 
 // Detect a change in the text

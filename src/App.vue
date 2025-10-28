@@ -5,18 +5,19 @@
     chaptersDownloaded,
     chaptersViewed 
   } from './stores/dataStore'
+  import type { Store } from 'pinia'
 
-  function installSerializeDeserialize(store: StoreDefinition, storeKey: string) {
+
+  function installSerializeDeserialize(store: Store, storeKey: string) {
     // deserialize
     const storageData = localStorage.getItem(storeKey)
-    if (storageData) store.$patch(JSON.parse(storageData));
-
+    if (storageData){
+      store.$patch(JSON.parse(storageData));
+    }
     // serialize
     store.$subscribe((_mutation, state) => {
-      // console.log(storeKey, state);
-      localStorage.setItem(storeKey, JSON.stringify(state))
-  })
-
+      localStorage.setItem(storeKey, JSON.stringify(state));
+    })
   }
 
   // Exceute the store to gather the books data when the app loads!

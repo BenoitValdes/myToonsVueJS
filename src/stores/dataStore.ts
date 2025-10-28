@@ -8,7 +8,6 @@ import { Book, Chapter } from '../models.ts';
 export const booksStore = defineStore('data', () => {
   const masterURL = 'https://raw.githubusercontent.com/BenoitValdes/manwha_rss_feeds/refs/heads/main/master.xml';
   const books = ref<Book[]>([])
-  const chapters = ref<Chapter[]>([])
 
   async function fetchData() {
     const masterRSS = await loadXML(masterURL);

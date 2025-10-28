@@ -1,11 +1,5 @@
 <script setup lang="ts">
-  import router from '../router'
-  import { ref, onMounted, watch } from 'vue';
-  import Topbar from '../components/Topbar.vue'
-  import Navbar from '../components/Navbar.vue'
-  import Card from '../components/Card.vue'
-  import Chapteritem from '../components/Chapteritem.vue'
-
+  import { ref, watch } from 'vue';
   import { booksStore } from '../stores/dataStore.ts'
   import { Chapter } from '../models.ts'
 
@@ -16,12 +10,12 @@
 
   // Handle nav bar animation
   const isVisible = ref<Boolean>(true);
-  const topNavBar = ref<HTMLInputElement>(null);
-  const container = ref<HTMLInputElement>(null);
-  const bottomNavBar = ref<HTMLInputElement>(null);
+  const topNavBar = ref<HTMLElement | null>(null);
+  const container = ref<HTMLElement | null>(null);
+  const bottomNavBar = ref<HTMLElement | null>(null);
 
   function setNavBarVisibility(visible: Boolean) {
-    if (!topNavBar || !bottomNavBar ) return
+    if (!topNavBar.value || !bottomNavBar.value ) return
     if (visible) {
       isVisible.value = true;
       topNavBar.value.classList.remove("hidden");
@@ -41,10 +35,11 @@
   }
 
   function containerScrolled() {
+    if (!container.value) return;
     const currentScrollY = container.value.scrollTop;
     if (currentScrollY >= container.value.scrollHeight * 0.97) {
       setNavBarVisibility(true);
-      if (chapter) {
+      if (chapter.value) {
         chapter.value.setViewed(true)
       }
     }
@@ -54,9 +49,9 @@
 
   // Handle data loading
   const store = booksStore()
-  const chapter = ref<Chapter>(null);
-  const prevChapter = ref<Chapter>(null)
-  const nextChapter = ref<Chapter>(null)
+  const chapter = ref<Chapter | null>(null);
+  const prevChapter = ref<Chapter | null>(null)
+  const nextChapter = ref<Chapter | null>(null)
 
   async function findChapter(){
     if (chapter.value) return;
@@ -71,16 +66,16 @@
     }
     
     for (let i = 0; i < book.chapters.length; i++) {
-      const chap = book.chapters[i];
-      if (chap.guid != props.chapterGuid) continue;
+      const chap: Chapter = book.chapters[i]!;
+      if (chap && chap.guid != props.chapterGuid) continue;
       // set the chapter as we found it.
       chapter.value = chap;
       
       if (i != 0) {
-        nextChapter.value = book.chapters[i-1];
+        nextChapter.value = book.chapters[i-1]!;
       }
       if (i < book.chapters.length) {
-        prevChapter.value = book.chapters[i+1];
+        prevChapter.value = book.chapters[i+1]!;
       }
     }
   }
@@ -97,9 +92,8 @@
 </script>
 
 <template>
-  <nav ref="topNavBar" class="top-nav chapter">
+  <nav ref="topNavBar" class="top-nav chapter" v-if="chapter && chapter.book">
     <RouterLink
-      v-if="chapter"
       :to="`/book/${chapter.book.guid}`"
       class="icon- back-btn"
     />
@@ -123,7 +117,7 @@
       class="icon-angle-left-solid"
       :class="{invisible: !prevChapter}"
     />
-    {{ chapter ? chapter.title : 'loading...'}}
+    <div class="marquee"> {{ chapter ? chapter.title : 'loading...'}} </div>
     <RouterLink
       :to="nextChapter ? `/book/${props.bookGuid}/chapter/${nextChapter.guid}` : ''"
       class="icon-angle-right-solid"
