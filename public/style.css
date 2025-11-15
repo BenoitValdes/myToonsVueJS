@@ -383,7 +383,7 @@ nav.chapter {
 .header .back-btn {
     position: absolute;
     left: 10px;
-    top: 20px;
+    top: calc(20px + var(--top-safe-area));
     font-size: 30px;
 }
 .back-btn::before {

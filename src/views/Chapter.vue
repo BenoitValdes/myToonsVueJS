@@ -123,7 +123,6 @@
       class="icon-angle-right-solid"
       :class="{invisible: !nextChapter}"
     />
-
   </nav>
 </template>
 <style scoped></style>
