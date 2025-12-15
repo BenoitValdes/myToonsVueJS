@@ -25,13 +25,19 @@ function onImageError() {
   emit('load', props.index);
 }
 
+function retryLoad() {
+  if (status.value === 'failed') {
+    status.value = 'loading';
+  }
+}
 </script>
 
 <template>
   <div v-if="status !== 'loaded'" class="image-wrapper">
     <Loader v-if="status === 'loading'" class="loading-spinner"/>
-    <div v-else-if="status === 'failed'">
+    <div v-else class="loading-failed">
       <p>Image failed to load: {{ altText }}</p>
+      <button @click.stop="retryLoad">Retry</button>
     </div>
   </div>  
   <img
@@ -55,4 +61,12 @@ function onImageError() {
     width: 100%;
     flex-direction: column;
   }
+.loading-failed {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centers horizontally */
+  justify-content: center; /* Centers vertically */
+  width: 100%;
+  height: 100%;
+}
 </style>
