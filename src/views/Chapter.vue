@@ -136,14 +136,14 @@
     @click="containerClicked"
     @scroll="containerScrolled"  
   >
-    <ChapterImage 
-      v-for="(image, index) in imagesToRender"
-      :key="index"
-      :image-url="image"
-      @load="onImageLoad(index)"
-      :alt-text="`Chapter Page ${index + 1}`"
-      :index="index"
-    />
+  <ChapterImage 
+    v-for="(image, index) in imagesToRender"
+    :key="index"
+    :image-url="image"
+    @load="onImageLoad(index)"
+    :alt-text="`Page ${index + 1}`"
+    :index="index"
+  />
   </div>
   <nav ref="bottomNavBar" class="bottom-nav chapter">
     <RouterLink

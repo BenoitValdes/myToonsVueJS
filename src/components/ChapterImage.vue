@@ -28,47 +28,31 @@ function onImageError() {
 </script>
 
 <template>
-  <div class="image-wrapper">
+  <div v-if="status !== 'loaded'" class="image-wrapper">
     <Loader v-if="status === 'loading'" class="loading-spinner"/>
-    <p v-else-if="status === 'failed'">
-      Image failed to load (Index {{ index }})
-    </p>
-  </div>
+    <div v-else-if="status === 'failed'">
+      <p>Image failed to load: {{ altText }}</p>
+    </div>
+  </div>  
+  <img
+    v-if="status !== 'failed'"
+    :src="imageUrl"
+    :alt="altText"
+    @load="onImageLoad"
+    @error="onImageError"
+    :class="{ 'loaded': status === 'loaded' }"
+    :key="imageUrl + status"
+  />
+
 </template>
 
 <style scoped>
-/* .image-wrapper {
-  position: relative;
-  min-height: 400px; 
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-}
-
-img {
-  max-width: 100%;
-  display: block;
-  opacity: 0; 
-  transition: opacity 0.3s;
-}
-
-img.loaded {
-  opacity: 1;
-}
-
-.loading-spinner, .loading-failed {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.loading-spinner p {
-  font-weight: bold;
-} */
+  .image-wrapper {
+    min-height: 400px; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    flex-direction: column;
+  }
 </style>
