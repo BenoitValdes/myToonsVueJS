@@ -3,6 +3,7 @@
   import { ref, onMounted, watch } from 'vue';
   import Navbar from '../components/Navbar.vue'
   import Chapteritem from '../components/Chapteritem.vue'
+  import BookDetailLoader from '../components/BookDetailLoader.vue'
 
   import { booksStore } from '../stores/dataStore.ts'
   import { Book } from '../models.ts'
@@ -211,6 +212,9 @@
         ref="chapterItems"
       />
     </div>
+  </div>
+  <div class="container" v-else>
+    <BookDetailLoader />
   </div>
   <button
    v-if="downloadMode"
