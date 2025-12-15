@@ -1,7 +1,8 @@
 <script setup lang="ts">
-  import { ref, watch, computed } from 'vue'; // Import 'computed'
+  import { ref, watch, computed } from 'vue'; 
   import { booksStore } from '../stores/dataStore.ts'
   import { Chapter } from '../models.ts'
+  import ChapterImage from '../components/ChapterImage.vue';
 
   const props = defineProps({
     bookGuid: String,
@@ -135,13 +136,13 @@
     @click="containerClicked"
     @scroll="containerScrolled"  
   >
-    <img 
+    <ChapterImage 
       v-for="(image, index) in imagesToRender"
       :key="index"
-      :src="image"
+      :image-url="image"
       @load="onImageLoad(index)"
-      @error="onImageLoad(index)"
-      :alt="`Chapter Page ${index + 1}`"
+      :alt-text="`Chapter Page ${index + 1}`"
+      :index="index"
     />
   </div>
   <nav ref="bottomNavBar" class="bottom-nav chapter">
