@@ -202,6 +202,7 @@ a.invisible {
 
 nav {
     background-color: var(--surface);
+    z-index: 10;
 }
 
 .top-nav {
