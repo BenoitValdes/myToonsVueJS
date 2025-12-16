@@ -63,7 +63,7 @@
   function containerScrolled() {
     if (!container.value) return;
     const currentScrollY = container.value.scrollTop;
-    if (currentScrollY >= container.value.scrollHeight * 0.97) {
+    if (currentScrollY >= container.value.scrollHeight * 0.95) {
       setNavBarVisibility(true);
       if (chapter.value) {
         chapter.value.setViewed(true)
@@ -132,7 +132,7 @@
   </nav>
   <div
     ref="container"
-    class="container"
+    class="chapter-container"
     @click="containerClicked"
     @scroll="containerScrolled"  
   >

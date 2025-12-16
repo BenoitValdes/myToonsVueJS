@@ -382,6 +382,24 @@ nav.chapter {
     width: 100%;
 }
 
+.chapter-container {
+    flex: 1;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    /* Guaranteed fix for vertical spacing between images */
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 0;
+}
+
+/* Ensure the images themselves don't introduce margin */
+.chapter-container > img {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
 .grid {
     display: flex;
     flex-direction: row;
